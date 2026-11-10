@@ -1,0 +1,32 @@
+name: Handoff CI
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_name:
+        description: 'Release name'
+        required: false
+        default: 'handover'
+
+jobs:
+  handoff-log:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Write handoff log
+        run: |
+          {
+            echo "Handoff log generated on $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+            echo "Account: HeziLiu"
+            echo "Repository: mcpmark-eval-liuhezi/handoff-ci"
+            echo "Purpose: Release handover documentation"
+          } > handoff-log.txt
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Upload handoff summary artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: handoff-summary
+          path: handoff-log.txt
+          retention-days: 30
