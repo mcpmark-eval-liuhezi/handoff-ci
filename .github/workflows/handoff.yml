@@ -12,18 +12,21 @@ jobs:
   handoff-log:
     runs-on: ubuntu-latest
     steps:
-      - name: Write handoff log
-        run: echo "Handoff log generated on $(date -u +'%Y-%m-%dT%H:%M:%SZ')" > handoff-log.txt
-
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Write handoff log
+        run: |
+          echo "Handoff log generated on $(date -u +'%Y-%m-%dT%H:%M:%SZ')" | tee handoff-log.txt
+          ls -la handoff-log.txt
+
       - name: Show handoff log contents
-        run: cat handoff-log.txt || true
+        run: cat handoff-log.txt
 
       - name: Upload handoff summary artifact
         uses: actions/upload-artifact@v4
         with:
           name: handoff-summary
-          path: handoff-log.txt
+          path: .
+          if-no-files-found: error
           retention-days: 30
